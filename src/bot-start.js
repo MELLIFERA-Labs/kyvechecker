@@ -151,7 +151,7 @@ bot.on("message", async (ctx) => {
 		node_address: nodeAddress
 	});
 	if (isSubExist) return ctx.reply("You already have this node in your watch list! check with command /list ");
-	const countOfSubscription = await db.col.subscriptions.find().count();
+	const countOfSubscription = await db.col.subscriptions.find({user: user.id}).count();
 	if (countOfSubscription > config.MAXIMUM_SUBSCRIPTIONS) {
 		return ctx.reply('Sorry, you have reached maximum nodes subscriptions');
 	}
