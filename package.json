@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:bot": "node src/bot-start.js",
-    "start:nififier": "node src/notifier.js",
+    "start:notifier": "node src/notifier.js",
     "start:bot:local": "DEBUG=\"grammy*\" nodemon src/bot-start.js",
     "start:notifier:local": "nodemon src/notifier.js",
     "start": "node src/index.js"
