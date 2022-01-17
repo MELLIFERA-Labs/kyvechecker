@@ -75,7 +75,11 @@ bot.on("callback_query:data", async (ctx) => {
 	const action = actions[type];
 	return action();
 });
-
+function positionMsg(recentPos, threshold) {
+	if(recentPos === null) return `❌ Out of top`
+	if(threshold >= recentPos) return `${recentPos} ✅`
+	return `${recentPos} ❌ Lower than specified threshold`
+}
 function createSubMessage(sub) {
 	return `
 	Node address: ${sub.node_address}
@@ -84,7 +88,7 @@ function createSubMessage(sub) {
 	Total staked: ***${toHumanReadable(sub.node.totalStaked)}*** $KYVE
 	Expected APY: ***${toHumanReadable(sub.node.apy)}*** %
 	Total proposals: ${sub.node.proposalsValidated}
-	Position: ${sub.node.recent_position} ${sub.threshold >= sub.node.recent_position ? '✅' : `❌ Lower than specified threshold`}
+	Position: ${positionMsg(sub.node.recent_position, sub.threshold)}
 	Threshold: ${sub.threshold} 
 	------- Pool info --------
 	***${sub.node.pool.metadata.name}***
