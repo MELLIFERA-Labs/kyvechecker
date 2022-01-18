@@ -11,6 +11,7 @@ function toInfOrNumber(number) {
 async function notifier() {
 	log.info('start notify')
 	const subscriptions = await db.col.subscriptions.find({}).toArray();
+	//todo make it more efficient
 	const localNodes = await db.col.nodes.find().toArray();
 	const remoteNodes = (await getAllValidator()).reduce((acc, node) => {
 		acc[node.nodeAddress] = node;

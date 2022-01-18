@@ -190,6 +190,7 @@ bot.on("my_chat_member").filter(
 			{ id: ctx.update.my_chat_member.from.id },
 			{ $set: { is_active: false } }
 		);
+		await db.col.subscriptions.deleteMany({ user: ctx.update.my_chat_member.from.id })
 	}
 );
 async function main() {
