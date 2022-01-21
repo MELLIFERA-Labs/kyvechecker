@@ -60,4 +60,7 @@ async function main() {
 	await db.connect();
 	await loop();
 }
-main().catch(error => log.fatal(error));
+main().catch(error => {
+		log.fatal(error);
+		process.exit(1);
+	});
