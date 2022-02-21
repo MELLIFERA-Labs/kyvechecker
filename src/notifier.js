@@ -2,7 +2,7 @@ const {getAllValidator} = require('./kyve-api');
 const db = require('./db');
 const bot = require('./bot');
 const log = require('./logger').Logger('notifier');
-const config = require('./../config');
+const { config } = require('./config-manager');
 
 function toInfOrNumber(number) {
 	if(!number) return Infinity;

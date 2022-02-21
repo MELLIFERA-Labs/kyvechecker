@@ -1,6 +1,5 @@
-const config = require("./../config");
+const { config } = require("./config-manager");
 const { MongoClient } = require("mongodb");
-const { Logger } = require("tslog");
 const log = require('./logger').Logger('database');
 // Connection URI
 const uri = config.MONGO_DB;

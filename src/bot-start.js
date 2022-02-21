@@ -108,9 +108,11 @@ example:
 
 You can add maximum ${config.MAXIMUM_SUBSCRIPTIONS} nodes, for now`
 	await ctx.reply(message);
-	return ctx.replyWithAnimation(
-		"CgACAgIAAxkBAAIC4WHj_kym-N6EnaOlmURoJ50IqI2AAALFEQAC2t4hSzrhOUkIuq-pIwQ"
-	);
+	if(config.HELP_ANIMATION_ID) {
+		return ctx.replyWithAnimation(
+			config.HELP_ANIMATION_ID
+		);
+	}
 }
 bot.command('help', helpCTL);
 bot.command('start', helpCTL);
