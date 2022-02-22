@@ -44,8 +44,6 @@ To pull the latest Docker image, run:
 docker pull ruslanglaznyov/kyvechecker:latest
 ```
 
-And to start your node, run the following (don't forget to pass in [options](#options)):
-
 Run a bot with a docker:
 ```
 docker run --rm --name kevechecker <repo name> -v ./config.js:/config.js bot 
