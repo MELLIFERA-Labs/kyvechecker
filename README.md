@@ -1,5 +1,7 @@
 # KYVECHECKER
 
+Telegram bot: https://t.me/kyvecheckerbot
+
 This bot was created to manage KYVE (https://app.kyve.network/) nodes. You can easily add your own nodes or which you
 delegate. If a node is out of your threshold, you will be notified
 
@@ -41,10 +43,8 @@ You can run the KYVECHECKER directly from Docker.
 To pull the latest Docker image, run:
 
 ```
-docker pull <repo name>
+docker pull ruslanglaznyov/kyvechecker:latest
 ```
-
-And to start your node, run the following (don't forget to pass in [options](#options)):
 
 Run a bot with a docker:
 ```
@@ -54,8 +54,25 @@ Run a notifier with a docker:
 ```
 docker run --rm --name kevechecker <repo name> -v ./config.js:/config.js notifier 
 ```
-Also, you can run with `docker-compose`:
-TODO
+Also, you can run with `docker-compose.yaml`:
+```
+version: "3"
+services:
+  kyvechecker-bot:
+    image: ruslanglaznyov/kyvechecker:latest
+    command:
+      - bot
+    volumes:
+      - ./config.js:/config.js
+
+  kyvechecker-notifier:
+    image: ruslanglaznyov/kyvechecker:latest
+    command:
+      - notifier
+    volumes:
+      - ./config.js:/config.js
+```
+Just put the 
 
 ## Contributing
 
