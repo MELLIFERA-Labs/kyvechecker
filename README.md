@@ -1,5 +1,7 @@
 # KYVECHECKER
 
+Telegram bot: https://t.me/kyvecheckerbot
+
 This bot was created to manage KYVE (https://app.kyve.network/) nodes. You can easily add your own nodes or which you
 delegate. If a node is out of your threshold, you will be notified
 
