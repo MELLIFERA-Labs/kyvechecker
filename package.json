@@ -1,7 +1,7 @@
 {
     "name": "kyve-bot",
     "version": "1.0.0",
-    "description": "",
+    "description": "This bot was created to manage KYVE (https://app.kyve.network/) nodes. You can easily add your own nodes or which you\ndelegate. If a node is out of your threshold, you will be notified",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,7 +14,7 @@
         "prepare": "husky install"
     },
     "author": "ruslanglaznyov",
-    "license": "ISC",
+    "license": "MIT",
     "dependencies": {
         "@grammyjs/hydrate": "^1.0.3",
         "@grammyjs/stateless-question": "^3.0.1",
