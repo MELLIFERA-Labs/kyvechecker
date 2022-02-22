@@ -1,29 +1,36 @@
 {
-  "name": "kyve-bot",
-  "version": "1.0.0",
-  "description": "",
-  "main": "src/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start:bot": "node src/bot-start.js",
-    "start:notifier": "node src/notifier.js",
-    "start:bot:local": "DEBUG=\"grammy*\" nodemon src/bot-start.js",
-    "start:notifier:local": "nodemon src/notifier.js",
-    "start": "node src/index.js"
-  },
-  "author": "ruslanglaznyov",
-  "license": "ISC",
-  "dependencies": {
-    "@grammyjs/hydrate": "^1.0.3",
-    "@grammyjs/stateless-question": "^3.0.1",
-    "bignumber.js": "^9.0.2",
-    "grammy": "^1.6.1",
-    "graphql": "^16.2.0",
-    "graphql-request": "^3.7.0",
-    "mongodb": "^4.3.0",
-    "tslog": "^3.3.1"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.15"
-  }
+    "name": "kyve-bot",
+    "version": "1.0.0",
+    "description": "This bot was created to manage KYVE (https://app.kyve.network/) nodes. You can easily add your own nodes or which you\ndelegate. If a node is out of your threshold, you will be notified",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node index.js",
+        "start:local": "DEBUG=\"grammy*\" nodemon index.js",
+        "format:check": "prettier --check .",
+        "format:write": "prettier --write .",
+        "lint:check": "eslint .",
+        "lint:fix": "eslint --fix .",
+        "prepare": "husky install"
+    },
+    "author": "ruslanglaznyov",
+    "license": "MIT",
+    "dependencies": {
+        "@grammyjs/hydrate": "^1.0.3",
+        "@grammyjs/stateless-question": "^3.0.1",
+        "bignumber.js": "^9.0.2",
+        "commander": "^9.0.0",
+        "grammy": "^1.6.1",
+        "graphql": "^16.2.0",
+        "graphql-request": "^3.7.0",
+        "mongodb": "^4.3.0",
+        "tslog": "^3.3.1"
+    },
+    "devDependencies": {
+        "eslint": "^8.9.0",
+        "eslint-config-prettier": "^8.4.0",
+        "husky": "^7.0.4",
+        "nodemon": "^2.0.15",
+        "prettier": "^2.5.1"
+    }
 }
