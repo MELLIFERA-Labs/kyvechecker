@@ -18,20 +18,22 @@ Install dependencies
 
 `npm install`
 
-Before run store a `config.js` file in the project folder. The config sample can be find
-in `config.sample.js`
+Before run store a `config.js` file in the project folder. The config sample can be find in `config.sample.js`
 
 Otherwise, you can specify your own path to the config file
+
 ```
 npm start <bot or notifier> -- --config=<path to the config file>`
 ```
 
 Run a bot:
+
 ```
 npm start bot
 ```
 
 Run a notifier:
+
 ```
 npm start notifier
 ```
@@ -47,14 +49,19 @@ docker pull ruslanglaznyov/kyvechecker:latest
 ```
 
 Run a bot with a docker:
+
 ```
 docker run --rm --name kevechecker <repo name> -v ./config.js:/config.js bot 
 ```
+
 Run a notifier with a docker:
+
 ```
 docker run --rm --name kevechecker <repo name> -v ./config.js:/config.js notifier 
 ```
+
 Also, you can run with `docker-compose.yaml`:
+
 ```
 version: "3"
 services:
@@ -72,7 +79,8 @@ services:
     volumes:
       - ./config.js:/config.js
 ```
-Just put the 
+
+Put the `config.js` with your `docker-compose.yaml`. The config sample can be finding here `config.sample.js`
 
 ## Contributing
 
