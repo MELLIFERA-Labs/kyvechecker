@@ -1,5 +1,5 @@
 const { request, gql } = require('graphql-request')
-const KYVE_GRAPHQL_URL = 'https://kyve-cache.herokuapp.com/graphql'
+const KYVE_GRAPHQL_URL = 'https://cache.kyve.network/graphql'
 const log = require('./logger').Logger('api')
 
 async function getAllPools() {
@@ -15,7 +15,7 @@ async function getAllPools() {
             }
         }
     `
-    return request('https://kyve-cache.herokuapp.com/graphql', query)
+    return request(KYVE_GRAPHQL_URL, query)
 }
 
 async function getPoolById(poolId) {
@@ -24,27 +24,39 @@ async function getPoolById(poolId) {
 	findPool(poolId: "${poolId}") {
     _id
     poolAddress
-    uploadLimit
+    startHeight
+    height
+    poolHeight
+    size
+    totalRewards
+    uploadTimeout
+    bundleDelay
+    operatingCost
+    storageCost
+    totalFunds
+    minFunds
+    totalStake
+    minStake
+    totalDelegation
     maxFunders
     maxValidators
-    minFunds
-    minStake
     slashThreshold
-    uploader
-    kyvePerByte
-    idleCost
-    totalFunded
-    totalStaked
-    paused
+    config {
+      rpc
+      wss
+    }
     metadata {
       name
       runtime
       logo
-      bundleSize
       versions
     }
-  }
-  
+    paused
+    validators
+    funders
+    chainIndexed
+    cost
+    }
   }`
     return (await request(KYVE_GRAPHQL_URL, query)).findPool
 }
@@ -53,17 +65,19 @@ async function getPoolValidators(poolId) {
     const query = gql`
  {
    findPoolValidators(poolId: "${poolId}") {
-     nodeAddress
-     poolAddress
-     apy
-     commission
-     totalDelegators
-     totalPoints
-     totalSlashes
-     totalStaked
-     proposalsValidated
-     isUploader
-     isValidator
+        nodeId
+        nodeAddress
+        poolAddress
+        validProposalsCreated
+        personalStake
+        points
+        slashes
+        delegators
+        commission
+        totalDelegationRewards
+        totalDelegation
+        votingPowerPercentage
+        apyPercentage
    }
  }`
     try {

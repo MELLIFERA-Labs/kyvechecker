@@ -42,10 +42,10 @@ const changeThresholdQuestion = new StatelessQuestion(
         const threshold = parseInt(ctx.msg.text)
         if (isNaN(threshold))
             return await this.replyWithMarkdown(ctx, 'should be number!', docId)
-        if (threshold <= 0 || threshold > 20)
+        if (threshold <= 0 || threshold > 50)
             return await this.replyWithMarkdown(
                 ctx,
-                'should be between  0 and 20!',
+                'should be between  0 and 50!',
                 docId
             )
         await db.col.subscriptions.updateOne(
@@ -96,7 +96,7 @@ bot.on('callback_query:data', async (ctx) => {
         'inline:change-threshold': async () => {
             await changeThresholdQuestion.replyWithMarkdown(
                 ctx,
-                'Enter your threshold between 0 and 20?',
+                'Enter your threshold between 0 and 50?',
                 data
             )
         },
@@ -113,11 +113,12 @@ function createSubMessage(sub) {
     return `
 	Node address: ${sub.node_address}
 	Pool address: ${sub.pool_id}
-	Total delegators: ${sub.node.totalDelegators}
-	Total staked: ***${toHumanReadable(sub.node.totalStaked)}*** $KYVE
-	Expected APY: ***${toHumanReadable(sub.node.apy)}*** %
-	Total proposals: ${sub.node.proposalsValidated}
+	Total delegators: ${sub.node.delegators}
+	Staked: ***${toHumanReadable(sub.node.personalStake)}*** $KYVE
+	Expected APY: ***${toHumanReadable(sub.node.apyPercentage)}*** %
+	Valid proposals created: ${sub.node.validProposalsCreated}
 	Position: ${positionMsg(sub.node.recent_position, sub.threshold)}
+	Commission: ${toHumanReadable(sub.node.commission)}
 	Threshold: ${sub.threshold} 
 	------- Pool info --------
 	***${sub.node.pool.metadata.name}***
@@ -152,8 +153,8 @@ bot.command('list', async (ctx) => {
                 {
                     $lookup: {
                         from: 'nodes',
-                        localField: 'node_address',
-                        foreignField: 'nodeAddress',
+                        localField: 'uniqueSubscriptionAddress',
+                        foreignField: 'uniqueNodeAddress',
                         as: 'node',
                     },
                 },
@@ -196,6 +197,7 @@ bot.on('message', async (ctx) => {
     const isSubExist = await db.col.subscriptions.findOne({
         user: user.id,
         node_address: nodeAddress,
+        pool_id: poolId,
     })
     if (isSubExist)
         return ctx.reply(
@@ -208,9 +210,12 @@ bot.on('message', async (ctx) => {
         return ctx.reply('Sorry, you have reached maximum nodes subscriptions')
     }
 
-    if (!(await db.col.nodes.findOne({ nodeAddress }))) {
+    if (!(await db.col.nodes.findOne({ nodeAddress, poolAddress: poolId }))) {
         //add unique index
-        await db.col.nodes.insertOne({ ...currentNode })
+        await db.col.nodes.insertOne({
+            ...currentNode,
+            uniqueNodeAddress: `${nodeAddress}:${poolId}`,
+        })
     }
     const sub = {
         user: user.id,
@@ -220,7 +225,10 @@ bot.on('message', async (ctx) => {
         isNotify: true,
         meta: currentNode.pool.metadata,
     }
-    const result = await db.col.subscriptions.insertOne(sub)
+    const result = await db.col.subscriptions.insertOne({
+        ...sub,
+        uniqueSubscriptionAddress: `${nodeAddress}:${poolId}`,
+    })
     await ctx.reply(
         createSubMessage({
             _id: result.insertedId.toString(),
