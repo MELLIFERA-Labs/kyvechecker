@@ -24,5 +24,18 @@ program
         log.Logger('BOT').info('Notifier starting...')
         require('./src/notifier')
     })
+program
+    .command('message')
+    .description('Send message to users')
+    .argument(
+        '<message_name>',
+        'name of message located in messages folder, until ":" sign'
+    )
+    .action(async (messageName) => {
+        configManager.init(program.opts().config)
+        log.Logger('BOT').info('START message...')
+        const execute = require('./src/message')
+        await execute(messageName)
+    })
 
 program.parse()
