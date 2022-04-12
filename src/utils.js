@@ -1,9 +1,11 @@
 const { BigNumber } = require('bignumber.js')
-
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
 function toHumanReadable(amount) {
-    return new BigNumber(amount)
-        .dividedBy(new BigNumber(10).exponentiatedBy(18))
-        .toFixed(5)
+    return numberWithCommas(
+        new BigNumber(amount).dividedBy(1000000000).toFixed(2).toString()
+    )
 }
 function Register() {
     const DELIMITER = '@$%^@'

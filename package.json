@@ -18,11 +18,10 @@
     "dependencies": {
         "@grammyjs/hydrate": "^1.0.3",
         "@grammyjs/stateless-question": "^3.0.1",
+        "axios": "^0.26.1",
         "bignumber.js": "^9.0.2",
         "commander": "^9.0.0",
         "grammy": "^1.6.1",
-        "graphql": "^16.2.0",
-        "graphql-request": "^3.7.0",
         "mongodb": "^4.3.0",
         "tslog": "^3.3.1"
     },
