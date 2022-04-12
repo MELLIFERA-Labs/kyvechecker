@@ -42,10 +42,10 @@ const changeThresholdQuestion = new StatelessQuestion(
         const threshold = parseInt(ctx.msg.text)
         if (isNaN(threshold))
             return await this.replyWithMarkdown(ctx, 'should be number!', docId)
-        if (threshold <= 0 || threshold > 20)
+        if (threshold <= 0 || threshold > 50)
             return await this.replyWithMarkdown(
                 ctx,
-                'should be between  0 and 20!',
+                'should be between 0 and 50!',
                 docId
             )
         await db.col.subscriptions.updateOne(
@@ -96,7 +96,7 @@ bot.on('callback_query:data', async (ctx) => {
         'inline:change-threshold': async () => {
             await changeThresholdQuestion.replyWithMarkdown(
                 ctx,
-                'Enter your threshold between 0 and 20?',
+                'Enter your threshold between 0 and 50?',
                 data
             )
         },
@@ -111,17 +111,16 @@ function positionMsg(recentPos, threshold) {
 }
 function createSubMessage(sub) {
     return `
-	Node address: ${sub.node_address}
-	Pool address: ${sub.pool_id}
-	Total delegators: ${sub.node.totalDelegators}
-	Total staked: ***${toHumanReadable(sub.node.totalStaked)}*** $KYVE
-	Expected APY: ***${toHumanReadable(sub.node.apy)}*** %
-	Total proposals: ${sub.node.proposalsValidated}
+	Node address: ${sub.node.account}
+	Pool address: ${sub.node.pool.id}
+	Amount:***${toHumanReadable(sub.node.amount)}*** $KYVE
+	Moniker: ${sub.node.moniker}
 	Position: ${positionMsg(sub.node.recent_position, sub.threshold)}
+	Commission: ${sub.node.commission * 100} %
 	Threshold: ${sub.threshold} 
 	------- Pool info --------
-	***${sub.node.pool.metadata.name}***
-	Min stake: ***${toHumanReadable(sub.node.pool.minStake)}*** $KYVE
+	***${sub.node.pool.name}***
+	Min stake: ***${toHumanReadable(sub.node.pool.lowest_amount)}*** $KYVE
 	Paused: ${sub.node.pool.paused}       
 	`
 }
@@ -133,10 +132,10 @@ It's simple to use!
 To start track a node send in bot message in this format
 <pool id>:<node address>
 example:
-0x24E7b48c3a6E40ea0e50764E617906c9B7cf9F21:0x5120d9346E3Cb8CB99acc88ffc804f3bb8391E1B
+***0:kyve1a70hqszqg2ntuqkqt4wwp6vxmm859l2pd3zhmk***
 
 You can add maximum ${config.MAXIMUM_SUBSCRIPTIONS} nodes, for now`
-    await ctx.reply(message)
+    await ctx.reply(message, { parse_mode: 'Markdown' })
     if (config.HELP_ANIMATION_ID) {
         return ctx.replyWithAnimation(config.HELP_ANIMATION_ID)
     }
@@ -152,8 +151,8 @@ bot.command('list', async (ctx) => {
                 {
                     $lookup: {
                         from: 'nodes',
-                        localField: 'node_address',
-                        foreignField: 'nodeAddress',
+                        localField: 'uniqueSubscriptionAddress',
+                        foreignField: 'uniqueNodeAddress',
                         as: 'node',
                     },
                 },
@@ -175,9 +174,9 @@ bot.on('message', async (ctx) => {
     const [poolId, nodeAddress] = str.split(':')
     if (
         !poolId ||
-        !nodeAddress ||
-        poolId.length !== 42 ||
-        nodeAddress.length !== 42
+        !nodeAddress
+        // poolId.length !== 42 ||
+        // nodeAddress.length !== 1
     ) {
         return ctx.reply(
             "Sorry, I don't understand you :( Make sure that you make correct input! <poll address>:<node address >    "
@@ -186,7 +185,7 @@ bot.on('message', async (ctx) => {
     const poolData = await kyveAPI.getPoolValidators(poolId)
     if (!poolData) return ctx.reply('Make sure that pool id is correct')
     const currentNode = poolData.find(
-        (validator) => validator.nodeAddress === nodeAddress
+        (validator) => validator.account === nodeAddress
     )
     if (!currentNode)
         return ctx.reply(
@@ -196,6 +195,7 @@ bot.on('message', async (ctx) => {
     const isSubExist = await db.col.subscriptions.findOne({
         user: user.id,
         node_address: nodeAddress,
+        pool_id: poolId.toString(),
     })
     if (isSubExist)
         return ctx.reply(
@@ -208,9 +208,12 @@ bot.on('message', async (ctx) => {
         return ctx.reply('Sorry, you have reached maximum nodes subscriptions')
     }
 
-    if (!(await db.col.nodes.findOne({ nodeAddress }))) {
+    if (!(await db.col.nodes.findOne({ nodeAddress, poolAddress: poolId }))) {
         //add unique index
-        await db.col.nodes.insertOne({ ...currentNode })
+        await db.col.nodes.insertOne({
+            ...currentNode,
+            uniqueNodeAddress: `${nodeAddress}:${poolId}`,
+        })
     }
     const sub = {
         user: user.id,
@@ -218,9 +221,15 @@ bot.on('message', async (ctx) => {
         node_address: nodeAddress,
         threshold: config.DEFAULT_THRESHOLD,
         isNotify: true,
-        meta: currentNode.pool.metadata,
+        meta: {
+            name: currentNode.pool.name,
+            runtime: currentNode.pool.runtime,
+        },
     }
-    const result = await db.col.subscriptions.insertOne(sub)
+    const result = await db.col.subscriptions.insertOne({
+        ...sub,
+        uniqueSubscriptionAddress: `${nodeAddress}:${poolId}`,
+    })
     await ctx.reply(
         createSubMessage({
             _id: result.insertedId.toString(),
@@ -228,7 +237,10 @@ bot.on('message', async (ctx) => {
             node: currentNode,
         }),
         {
-            reply_markup: createSubBtns(sub),
+            reply_markup: createSubBtns({
+                ...sub,
+                _id: result.insertedId.toString(),
+            }),
             parse_mode: 'Markdown',
         }
     )
@@ -262,6 +274,7 @@ async function main() {
 
 bot.catch((e) => {
     log.fatal(e)
+    e.ctx.reply('Something went wrong, please contact @ruslangl')
 })
 
 main().catch((e) => log.fatal(e))

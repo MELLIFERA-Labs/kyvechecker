@@ -1,93 +1,60 @@
-const { request, gql } = require('graphql-request')
-const KYVE_GRAPHQL_URL = 'https://kyve-cache.herokuapp.com/graphql'
+const axios = require('axios').default
+const KYVE_POOL_URL =
+    'https://api.korellia.kyve.network/kyve/registry/v1beta1/pools?pagination.offset=0&pagination.limit=30&pagination.countTotal=true&search=&runtime=&paused=false'
+const KYVE_POOL_BY_ID =
+    'https://api.korellia.kyve.network/kyve/registry/v1beta1/pool'
+const KYVE_POOL_VALIDATORS_URL =
+    'https://api.korellia.kyve.network/kyve/registry/v1beta1/stakers_list'
+
+const getPoolByIdUrl = (id) => `${KYVE_POOL_BY_ID}/${id}`
+const getPoolValidatorsByIdUrl = (id) => `${KYVE_POOL_VALIDATORS_URL}/${id}`
 const log = require('./logger').Logger('api')
 
 async function getAllPools() {
-    const query = gql`
-        {
-            findPools {
-                poolAddress
-                metadata {
-                    name
-                    runtime
-                    logo
-                }
-            }
-        }
-    `
-    return request('https://kyve-cache.herokuapp.com/graphql', query)
+    return (await axios.get(KYVE_POOL_URL)).data.pools
 }
 
 async function getPoolById(poolId) {
-    const query = gql`
-	{
-	findPool(poolId: "${poolId}") {
-    _id
-    poolAddress
-    uploadLimit
-    maxFunders
-    maxValidators
-    minFunds
-    minStake
-    slashThreshold
-    uploader
-    kyvePerByte
-    idleCost
-    totalFunded
-    totalStaked
-    paused
-    metadata {
-      name
-      runtime
-      logo
-      bundleSize
-      versions
-    }
-  }
-  
-  }`
-    return (await request(KYVE_GRAPHQL_URL, query)).findPool
+    return (await axios.get(getPoolByIdUrl(poolId))).data.pool
 }
 
 async function getPoolValidators(poolId) {
-    const query = gql`
- {
-   findPoolValidators(poolId: "${poolId}") {
-     nodeAddress
-     poolAddress
-     apy
-     commission
-     totalDelegators
-     totalPoints
-     totalSlashes
-     totalStaked
-     proposalsValidated
-     isUploader
-     isValidator
-   }
- }`
     try {
         const pool = await getPoolById(poolId)
-        return (await request(KYVE_GRAPHQL_URL, query)).findPoolValidators.map(
-            (it, recent_position) => ({ ...it, recent_position, pool })
-        )
+        const validators = (await axios.get(getPoolValidatorsByIdUrl(poolId)))
+            .data.stakers
+        pool.lowest_amount = validators.find(
+            (it) => it.account === pool.lowest_staker
+        )?.amount
+        return validators
+            .sort((a, b) => Number(b.amount) - Number(a.amount))
+            .map((it, index) => ({ ...it, recent_position: index + 1, pool }))
     } catch (e) {
-        log.error(e)
+        log.error(e.message)
         return null
     }
 }
 
 async function getAllValidator() {
     const allPools = await getAllPools()
-    const promiseValidator = allPools.findPools.map(async (pool) => {
-        const validators = await getPoolValidators(pool.poolAddress)
-        return validators.map((validator, index) => {
-            return { pool: { ...pool }, ...validator, position: index }
-        })
+    const promiseValidator = allPools.map(async (pool) => {
+        const validators = (await axios.get(getPoolValidatorsByIdUrl(pool.id)))
+            .data.stakers
+        const lowest_validator = validators.find(
+            (it) => it.account === pool.lowest_staker
+        )
+        return validators
+            .sort((a, b) => Number(b.amount) - Number(a.amount))
+            .map((validator, index) => {
+                return {
+                    ...validator,
+                    pool: { ...pool, lowest_amount: lowest_validator.amount },
+                    recent_position: index + 1,
+                }
+            })
     })
     return (await Promise.all(promiseValidator)).flat()
 }
-
 module.exports = {
     getPoolValidators,
     getAllValidator,

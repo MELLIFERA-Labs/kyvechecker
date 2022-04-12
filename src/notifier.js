@@ -14,27 +14,28 @@ async function notifier() {
     //todo make it more efficient
     const localNodes = await db.col.nodes.find().toArray()
     const remoteNodes = (await getAllValidator()).reduce((acc, node) => {
-        acc[node.nodeAddress] = node
+        acc[node.account] = node
         return acc
     }, {})
     for (let node of localNodes) {
-        const remNode = remoteNodes[node.nodeAddress]
+        const remNode = remoteNodes[node.account]
         const prevPosition = toInfOrNumber(node.recent_position)
         const currentPosition = toInfOrNumber(remNode?.recent_position ?? null)
         const nodeSubs = subscriptions.filter(
-            (sub) => sub.node_address === node.nodeAddress
+            (sub) => sub.node_address === node.account
         )
         if (!remNode) {
             await db.col.nodes.updateOne(
-                { nodeAddress: node.nodeAddress },
+                { account: node.account },
                 { $set: { recent_position: null } }
             )
         } else {
             await db.col.nodes.updateOne(
-                { nodeAddress: node.nodeAddress },
+                { account: node.account },
                 { $set: { ...remNode } }
             )
         }
+
         const messages = []
         for (let nodeSub of nodeSubs) {
             //fail notification
@@ -46,7 +47,7 @@ async function notifier() {
                 messages.push(
                     bot.api.sendMessage(
                         nodeSub.user,
-                        `🔴 SANK DOWN\nNode: ${nodeSub.node_address} \nPool:${nodeSub.meta.name} \nPool id: ${nodeSub.pool_id}`
+                        `🔴 SANK DOWN\nNode: ${nodeSub.node_address} \nPool:${nodeSub.meta.name} \nPool id: ${nodeSub.pool_id}\n`
                     )
                 )
                 log.debug('send failed notification', {
@@ -63,7 +64,7 @@ async function notifier() {
                 messages.push(
                     bot.api.sendMessage(
                         nodeSub.user,
-                        `✅ UP\nNode: ${nodeSub.node_address} \nPool:${nodeSub.meta.name} \nPool id: ${nodeSub.pool_id}\n`
+                        `✅ UP\nNode: ${nodeSub.account} \nPool:${nodeSub.meta.name} \nPool id: ${nodeSub.pool_id}\n`
                     )
                 )
                 log.debug('send success notification', {
@@ -82,7 +83,7 @@ async function notifier() {
             }
         })
         log.info(
-            `Notifying node:${node.pool.metadata.runtime}|${node.nodeAddress} finished:`,
+            `Notifying node:${node.pool.runtime}|${node.account} finished:`,
             messages.length
         )
     }
