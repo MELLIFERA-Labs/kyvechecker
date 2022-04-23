@@ -1,3 +1,5 @@
+![code_quality_score](https://api.codiga.io/project/33110/score/svg)
+
 # KYVECHECKER
 
 Telegram bot: https://t.me/kyvecheckerbot
