@@ -1,4 +1,4 @@
-![code_quality_score](https://api.codiga.io/project/33110/score/svg)
+![code_quality_score](https://api.codiga.io/project/33110/score/svg)![GitHub](https://img.shields.io/github/license/MELLIFERA-Labs/kyvechecker)
 
 # KYVECHECKER
 
