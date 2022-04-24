@@ -1,4 +1,4 @@
-![code_quality_score](https://api.codiga.io/project/33110/score/svg)![node](https://img.shields.io/badge/node-%3E=16.13.2-green)![License](https://img.shields.io/github/license/MELLIFERA-Labs/kyvechecker)
+![code_quality_score](https://api.codiga.io/project/33110/score/svg) ![node](https://img.shields.io/badge/node-%3E=16.13.2-green) ![License](https://img.shields.io/github/license/MELLIFERA-Labs/kyvechecker)
 
 # KYVECHECKER
 
