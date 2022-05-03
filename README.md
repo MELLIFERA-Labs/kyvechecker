@@ -69,6 +69,7 @@ version: "3"
 services:
   kyvechecker-bot:
     image: ruslanglaznyov/kyvechecker:latest
+    restart: unless-stopped
     command:
       - bot
     volumes:
@@ -76,6 +77,7 @@ services:
 
   kyvechecker-notifier:
     image: ruslanglaznyov/kyvechecker:latest
+    restart: unless-stopped
     command:
       - notifier
     volumes:
