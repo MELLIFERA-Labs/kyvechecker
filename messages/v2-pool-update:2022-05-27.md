@@ -16,6 +16,8 @@ Also, bot will notify you when new pool will be launch
 
 I did a ton of work, if something work unexpectedly please contact me @ruslangl
 
+Star it on: https:\/\/github\.com\/MELLIFERA\-Labs\/kyvechecker
+
 RU: 
 
 Новая версия `Kyvechecker` теперь поддерживает отслеживание пулов
@@ -29,6 +31,8 @@ RU:
 Так же, вы можете установить нотификацию по минимальному стейку в пуле
 
 Я проделал куча работы, если что\-то работает неправильно, пожалуйста напишите мне @ruslangl
+
+Поставить звездочку: https:\/\/github\.com\/MELLIFERA\-Labs\/kyvechecker
 
 \- \- \- \- \- \-
 

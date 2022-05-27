@@ -20,7 +20,7 @@ async function migrate() {
     await db.col.pools.bulkWrite(poolUpdater)
     log.info('pools update finished')
 
-    const subscriptions = await db.col.nodes.find({}).toArray()
+    const subscriptions = await db.col.nodeSubscriptions.find({}).toArray()
     const nodesUpdater = subscriptions.map((it) => ({
         updateOne: {
             filter: { account: it.account },

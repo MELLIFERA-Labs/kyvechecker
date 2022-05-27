@@ -29,7 +29,7 @@ program
     .description('Run updater')
     .action(() => {
         configManager.init(program.opts().config)
-        log.Logger('BOT').info('Notifier starting...')
+        log.Logger('BOT').info('Updater starting...')
         require('./src/updater')
     })
 program
