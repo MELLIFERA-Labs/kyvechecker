@@ -19,5 +19,5 @@ function createSubBtns(sub) {
 }
 
 module.exports = {
-    createSubBtns,
+    createSubNodeBtns: createSubBtns,
 }

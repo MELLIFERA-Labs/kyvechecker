@@ -15,13 +15,22 @@ async function connect() {
 //collections
 const database = client.db()
 const users = database.collection('users')
-const subscriptions = database.collection('subscriptions')
+const nodeSubscriptions = database.collection('subscriptions')
+const poolSubscriptions = database.collection('pool_subscriptions')
+const pools = database.collection('pools')
+const poolsOld = database.collection('pools_old')
 const nodes = database.collection('nodes')
+const nodesOld = database.collection('nodes_old')
 module.exports = {
+    client,
     connect,
     col: {
         users,
         nodes,
-        subscriptions,
+        nodeSubscriptions,
+        poolSubscriptions,
+        pools,
+        poolsOld,
+        nodesOld,
     },
 }

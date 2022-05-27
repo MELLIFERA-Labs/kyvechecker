@@ -25,6 +25,14 @@ program
         require('./src/notifier')
     })
 program
+    .command('updater')
+    .description('Run updater')
+    .action(() => {
+        configManager.init(program.opts().config)
+        log.Logger('BOT').info('Notifier starting...')
+        require('./src/updater')
+    })
+program
     .command('message')
     .description('Send message to users')
     .argument(
@@ -37,5 +45,12 @@ program
         const execute = require('./src/message')
         await execute(messageName)
     })
-
+program
+    .command('migrate')
+    .description('run migration script ')
+    .action(async () => {
+        configManager.init(program.opts().config)
+        log.Logger('BOT').info('START migrate...')
+        require('./migrations/migrations')
+    })
 program.parse()
