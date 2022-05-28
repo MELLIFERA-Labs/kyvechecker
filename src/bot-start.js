@@ -458,8 +458,7 @@ async function nodeHandlerBot(ctx, poolId, nodeAddress) {
 
     if (
         !(await db.col.nodes.findOne({
-            account: nodeAddress,
-            pool_id: poolData.id,
+            uniqueNodeAddress: `${nodeAddress}:${poolId}`,
         }))
     ) {
         //add unique index
