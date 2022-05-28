@@ -19,6 +19,7 @@ jobs:
         key: ${{ secrets.OMG_SECRET }}
         port: ${{ secrets.PORT }}
         script: |
+          apt-get install -y npm
           npm ci
           npm install
       
