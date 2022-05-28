@@ -12,7 +12,7 @@ jobs:
     steps:
 
     - name: ssh commands using password
-      uses: appleboy/ssh-action@master
+    - uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST_SECRET }}
         username: ${{ secrets.USSER_SECRET }}
@@ -20,18 +20,16 @@ jobs:
         port: ${{ secrets.PORT }}
         script: |
           cd kyvechecker
-          npm -v
-          node -v
 
-      
-#     - uses: actions/setup-node@v3
-#       with:
-#         node-version: '14'
-#     - run: |
-#         npm install
-#         npm ci
-#         npm run format:check
-#         npm run format:write
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '14'
+    - run: |
+        npm install
+        npm ci
+        npm -v
+        node -v
 
           
           
