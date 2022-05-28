@@ -17,7 +17,7 @@ jobs:
         host: ${{ secrets.HOST_SECRET }}
         username: ${{ secrets.USSER_SECRET }}
         kye: ${{ secrets.OMG_SECRET }}
-        port: ${{ PORT }}
+        port: ${{ secrets.PORT }}
         script: |
           nmp ci
           npm run lint:check
