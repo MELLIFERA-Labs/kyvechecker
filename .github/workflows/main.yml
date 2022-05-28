@@ -21,11 +21,10 @@ jobs:
 
       
     - uses: actions/setup-node@v3
-    - uses: actions/checkout@v3
       with:
-        node-version: 16
+        node-version: '14'
     - run: |
-        npm i
+        npm ci
         npm run format:check
         npm run format:write
 
