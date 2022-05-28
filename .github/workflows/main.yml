@@ -18,11 +18,14 @@ jobs:
         username: ${{ secrets.USSER_SECRET }}
         key: ${{ secrets.OMG_SECRET }}
         port: ${{ secrets.PORT }}
-        script: |
-          nmp ci
-          npm run lint:check
-          npm run format:check
-          
+        
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 16.14.2   
+    - name: npm install 
+      run: |
+        npm install
+        npm run lint:check
           
           
           
