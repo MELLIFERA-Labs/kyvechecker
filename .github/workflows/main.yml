@@ -20,16 +20,18 @@ jobs:
         port: ${{ secrets.PORT }}
         script: |
           cd kyvechecker
+          npm -v
+          node -v
 
       
-    - uses: actions/setup-node@v3
-      with:
-        node-version: '14'
-    - run: |
-        npm install
-        npm ci
-        npm run format:check
-        npm run format:write
+#     - uses: actions/setup-node@v3
+#       with:
+#         node-version: '14'
+#     - run: |
+#         npm install
+#         npm ci
+#         npm run format:check
+#         npm run format:write
 
           
           
