@@ -1,0 +1,26 @@
+name: format fix
+
+on:
+  push:
+    branches: 
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+
+    - name: ssh commands using password
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST_SECRET }}
+        username: ${{ secrets.USSER_SECRET }}
+        kye: ${{ secrets.OMG_SECRET }}
+        port: ${{ PORT }}
+        script: |
+          nmp ci
+          npm run lint:check
+          npm run format:check
+          
+          
