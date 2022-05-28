@@ -18,16 +18,14 @@ jobs:
         username: ${{ secrets.USSER_SECRET }}
         key: ${{ secrets.OMG_SECRET }}
         port: ${{ secrets.PORT }}
-        script: |
-          apt-get install -y npm
-          npm ci
-          npm install
+
       
-#     - uses: actions/setup-node@v3
-#       with:
-#         node-version: 14
-#     - run: npm ci
-#     - run: npm test
+    - uses: actions/setup-node@v3
+    - uses: actions/checkout@v3
+      with:
+        node-version: 16
+    - run: npm ci
+    - run: npm test
           
           
           
