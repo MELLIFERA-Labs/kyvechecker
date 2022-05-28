@@ -24,6 +24,7 @@ jobs:
       with:
         node-version: '14'
     - run: |
+        npm install
         npm ci
         npm run format:check
         npm run format:write
