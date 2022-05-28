@@ -25,7 +25,7 @@ jobs:
       with:
         node-version: 16
     - run: |
-        npm ci
+        npm i
         npm run format:check
         npm run format:write
 
