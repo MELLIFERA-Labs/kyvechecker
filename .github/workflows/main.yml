@@ -18,14 +18,12 @@ jobs:
         username: ${{ secrets.USSER_SECRET }}
         key: ${{ secrets.OMG_SECRET }}
         port: ${{ secrets.PORT }}
-        
-    - uses: actions/setup-node@v1
+      
+    - uses: actions/setup-node@v3
       with:
-        node-version: 16.14.2   
-    - name: npm install 
-      run: |
-        npm install
-        npm run lint:check
+        node-version: 14
+    - run: npm ci
+    - run: npm test
           
           
           
