@@ -11,7 +11,7 @@ jobs:
     
     steps:
     - name: format check
-    - uses: actions/checkout@v3
+      uses: actions/checkout@v3
     - uses: actions/setup-node@v3
     - run: |
        npm ci
