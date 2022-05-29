@@ -10,18 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: ssh commands using password
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST_SECRET }}
-        username: ${{ secrets.USSER_SECRET }}
-        key: ${{ secrets.OMG_SECRET }}
-        port: ${{ secrets.PORT }}
-        
-        
+    - name: format check
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
     - run: |
        npm ci
+       npm run format:check
         
         
