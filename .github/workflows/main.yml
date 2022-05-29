@@ -18,8 +18,6 @@ jobs:
         username: ${{ secrets.USSER_SECRET }}
         key: ${{ secrets.OMG_SECRET }}
         port: ${{ secrets.PORT }}
-        script: |
-          cd kyvechecker
 
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
