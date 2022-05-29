@@ -23,6 +23,5 @@ jobs:
     - uses: actions/setup-node@v3
     - run: |
        npm ci
-       npm test
         
         
