@@ -18,14 +18,9 @@ jobs:
         key: ${{ secrets.OMG_SECRET }}
         port: ${{ secrets.PORT }}
         
-        
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
-      with:
-        node-version: 14
-    - run: |
-        npm install
-        npm ci
-        npm -v
-        node -v
+    - run: npm ci
+    - run: npm test
+        
         
