@@ -11,24 +11,38 @@ const getPoolValidatorsByIdUrl = (id) => `${KYVE_POOL_VALIDATORS_URL}/${id}`
 const log = require('./logger').Logger('api')
 
 async function getAllPools() {
-    return (await axios.get(KYVE_POOL_URL)).data.pools
+    const pools = (await axios.get(KYVE_POOL_URL)).data.pools
+    const poolsWithMinStake = pools.map(async (pool) => {
+        const validators = (await axios.get(getPoolValidatorsByIdUrl(pool.id)))
+            .data.stakers
+        const minStaker = validators.find(
+            (it) => it.account === pool.lowest_staker
+        )
+        return {
+            ...pool,
+            min_stake: minStaker.amount,
+            numberOfStakers: pool.stakers.length,
+        }
+    })
+    return Promise.all(poolsWithMinStake)
 }
 
 async function getPoolById(poolId) {
-    return (await axios.get(getPoolByIdUrl(poolId))).data.pool
+    try {
+        return (await axios.get(getPoolByIdUrl(poolId))).data.pool
+    } catch (e) {
+        if (e?.response?.data?.code === 3) return null
+        throw e
+    }
 }
 
-async function getPoolValidators(poolId) {
+async function getValidatorsByPoolId(poolId) {
     try {
-        const pool = await getPoolById(poolId)
         const validators = (await axios.get(getPoolValidatorsByIdUrl(poolId)))
             .data.stakers
-        pool.lowest_amount = validators.find(
-            (it) => it.account === pool.lowest_staker
-        )?.amount
         return validators
             .sort((a, b) => Number(b.amount) - Number(a.amount))
-            .map((it, index) => ({ ...it, recent_position: index + 1, pool }))
+            .map((it, index) => ({ ...it, recent_position: index + 1 }))
     } catch (e) {
         log.error(e.message)
         return null
@@ -36,26 +50,24 @@ async function getPoolValidators(poolId) {
 }
 
 async function getAllValidator() {
-    const allPools = await getAllPools()
+    const allPools = (await axios.get(KYVE_POOL_URL)).data.pools
     const promiseValidator = allPools.map(async (pool) => {
-        const validators = (await axios.get(getPoolValidatorsByIdUrl(pool.id)))
-            .data.stakers
-        const lowest_validator = validators.find(
-            (it) => it.account === pool.lowest_staker
-        )
+        const validators = await getValidatorsByPoolId(pool.id)
         return validators
             .sort((a, b) => Number(b.amount) - Number(a.amount))
             .map((validator, index) => {
                 return {
                     ...validator,
-                    pool: { ...pool, lowest_amount: lowest_validator.amount },
                     recent_position: index + 1,
                 }
             })
     })
     return (await Promise.all(promiseValidator)).flat()
 }
+
 module.exports = {
-    getPoolValidators,
+    getValidatorsByPoolId,
     getAllValidator,
+    getPoolById,
+    getAllPools,
 }
