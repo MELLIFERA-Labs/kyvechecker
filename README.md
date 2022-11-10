@@ -69,15 +69,29 @@ version: "3"
 services:
   kyvechecker-bot:
     image: ruslanglaznyov/kyvechecker:latest
+    network_mode: host
     restart: unless-stopped
     command:
       - bot
     volumes:
       - ./config.js:/config.js
 
+  kyvechecker-updater:
+    image: ruslanglaznyov/kyvechecker:latest
+    network_mode: host
+
+    restart: unless-stopped
+    command:
+      - updater
+    volumes:
+      - ./config.js:/config.js
+
   kyvechecker-notifier:
     image: ruslanglaznyov/kyvechecker:latest
+    network_mode: host
     restart: unless-stopped
+    depends_on:
+      - kyvechecker-updater
     command:
       - notifier
     volumes:
